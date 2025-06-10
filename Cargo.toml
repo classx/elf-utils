@@ -2,7 +2,48 @@
 name = "elf-utils"
 version = "0.1.0"
 edition = "2024"
+description = "A command-line utility for working with ELF files."
 
 [dependencies]
 clap = { version = "4.5.39", features = ["derive"] }
 goblin = "0.10.0"
+
+[profile.release]
+strip = true
+opt-level = "z"
+lto = true           # Link Time Optimization
+codegen-units = 1    # Better optimization
+panic = "abort"      # Smaller binary size
+
+[target.x86_64-unknown-linux-musl]
+linker = "x86_64-linux-musl-gcc"
+rustflags = ["-C", "target-feature=+crt-static"]
+
+[package.metadata.deb]
+maintainer = "Alexey <classx@gmail.com>"
+copyright = "2025, Alexey <classx@gmail.com>"
+license-file = ["LICENSE", "4"]
+extended-description = """\
+This tool provides functionality to list and execute commands on ELF files within specified directories.
+"""
+depends = ""
+section = "utils"
+priority = "optional"
+assets = [
+    [
+        "target/release/elf-utils", "usr/bin/elf-utils", "755"
+    ],
+]
+
+# RPM package configuration
+[package.metadata.generate-rpm]
+license = "MIT"
+summary = "This tool provides functionality to list and execute commands on ELF files within specified directories."
+assets = [
+    { source = "target/release/elf-utils", dest = "/usr/bin/elf-utils", mode = "0755" },
+    { source = "LICENSE", dest = "/usr/share/doc/elf-utilse/LICENSE", doc = true, mode = "0644" },
+    { source = "README.md", dest = "/usr/share/doc/elf-utilse/README.md", doc = true, mode = "0644" },
+]
+
+[package.metadata.generate-rpm.requires]
+# No specific requirements for static binary
