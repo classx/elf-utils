@@ -7,6 +7,7 @@ A command-line utility for working with ELF (Executable and Linkable Format) fil
 - Recursively find ELF files in directories
 - List all discovered ELF files
 - Execute commands on found ELF files
+- Check if a file is in ELF format
 - Silent mode operation
 - Exit code status for script integration
 
@@ -17,10 +18,16 @@ To build the project, you'll need Rust and Cargo installed on your system. Then:
 ```bash
 git clone <repository-url>
 cd elf-utils
-cargo build --release
+make build
 ```
 
 The compiled binary will be available in `target/release/elf-utils`.
+
+Or build using cargo directly:
+
+```bash
+cargo build --release
+```
 
 ## Usage
 
@@ -59,6 +66,19 @@ Exit codes:
 - 0: Command executed successfully on at least one ELF file
 - 1: No ELF files found to execute command on
 
+### Check Command
+
+The `check` command verifies if a specified file is in ELF format.
+
+```bash
+# Check if a file is in ELF format
+elf-utils check /path/to/binary
+```
+
+Exit codes:
+- 0: The file is an ELF file
+- 1: The file is not an ELF file or doesn't exist
+
 ## Examples
 
 1. Find all ELF files in /usr/local/bin:
@@ -74,6 +94,11 @@ elf-utils exec /usr/local/lib "file"
 3. List dependencies of all ELF files silently:
 ```bash
 elf-utils exec --silent /usr/local/bin "ldd"
+```
+
+4. Verify if a file is an ELF binary:
+```bash
+elf-utils check /usr/bin/ls
 ```
 
 ## Contributing
