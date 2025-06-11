@@ -36,6 +36,13 @@ enum Commands {
         #[clap(long, short, default_value_t = false)]
         silent: bool,
     },
+    /// Check if the file is an ELF file, only return exit code
+    Check {
+        /// Path to the ELF file
+        #[clap(value_parser)]
+        filename: String,
+    },
+
 }
 
 
@@ -149,5 +156,16 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 std::process::exit(1);
             }
         }
+
+        Commands::Check { filename } => {
+            // Implement check functionality here
+            let path = Path::new(filename);
+            if is_elf(path) {
+                std::process::exit(0);
+            } else {
+                std::process::exit(1);
+            }
+        }
+
     }
 }
