@@ -2,14 +2,17 @@
 
 A command-line utility for working with ELF (Executable and Linkable Format) files. This tool provides functionality to list and execute commands on ELF files within specified directories.
 
+_For Linux x86 only._
+
 ## Features
 
 - Recursively find ELF files in directories
 - List all discovered ELF files
 - Execute commands on found ELF files
 - Check if a file is in ELF format
-- Silent mode operation
-- Exit code status for script integration
+- Silent mode operation (--silent flag)
+- Exit code status for script integration (0 for success, 1 for failure)
+- Recursive directory scanning
 
 ## Installation
 
@@ -21,13 +24,23 @@ cd elf-utils
 make build
 ```
 
-The compiled binary will be available in `target/release/elf-utils`.
+This will build a statically linked binary using musl target, which will be available at `target/x86_64-unknown-linux-musl/release/elf-utils`.
 
-Or build using cargo directly:
+Or build using cargo directly for your native target:
 
 ```bash
 cargo build --release
 ```
+
+## Building From Source
+
+You can use the provided Makefile which includes the following targets:
+
+- `make build`: Build release binary with musl target
+- `make test`: Run tests
+- `make deb`: Create Debian package
+- `make rpm`: Create RPM package
+- `make clean`: Clean build artifacts
 
 ## Usage
 
@@ -44,8 +57,8 @@ elf-utils list --silent /usr/lib
 ```
 
 Exit codes:
-- 0: ELF files were found
-- 1: No ELF files were found
+- 0: ELF files were found and processed successfully
+- 1: No ELF files were found or operation failed
 
 ### Exec Command
 
@@ -60,11 +73,13 @@ elf-utils exec --silent /usr/lib "nm"
 
 # Check dependencies of ELF files
 elf-utils exec /usr/lib "ldd"
+
+The command will be executed on each ELF file found in the directory and its subdirectories. The file path is automatically appended as the last argument to your command.
 ```
 
 Exit codes:
 - 0: Command executed successfully on at least one ELF file
-- 1: No ELF files found to execute command on
+- 1: No ELF files found or command execution failed
 
 ### Check Command
 
